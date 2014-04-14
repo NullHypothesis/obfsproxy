@@ -18,6 +18,10 @@ TICKET_AES_CBC_IV_LENGTH = 16
 # directory but is later set by `setStateLocation()' in util.py.
 STATE_LOCATION = ""
 
+# Contains a ready-to-use bridge descriptor (in managed mode) or simply the
+# server's bind address together with the password (in external mode).
+DESCRIPTOR_FILE = "server_descriptor"
+
 # Divisor (in seconds) for the Unix epoch used to defend against replay
 # attacks.
 EPOCH_GRANULARITY = 3600
@@ -36,7 +40,7 @@ HMAC_SHA256_128_LENGTH = 16
 # Whether or not to use inter-arrival time obfuscation.  Disabling this option
 # makes the transported protocol more identifiable but increases throughput a
 # lot.
-USE_IAT_OBFUSCATION = False
+USE_IAT_OBFUSCATION = True
 
 # Key rotation time for session ticket keys in seconds.
 KEY_ROTATION_TIME = 60 * 60 * 24 * 7
@@ -54,6 +58,12 @@ MAX_PACKET_DELAY = 0.01
 
 # The maximum amount of padding to be appended to handshake data.
 MAX_PADDING_LENGTH = 1500
+
+# The maximum length of a handshake in bytes (UniformDH as well as session
+# tickets).
+MAX_HANDSHAKE_LENGTH = MAX_PADDING_LENGTH + \
+                       MARK_LENGTH + \
+                       HMAC_SHA256_128_LENGTH
 
 # Length of ScrambleSuit's MTU in bytes.  Note that this is *not* the link MTU
 # which is probably 1500.
@@ -90,7 +100,8 @@ SHARED_SECRET_LENGTH = 20
 
 # States which are used for the protocol state machine.
 ST_WAIT_FOR_AUTH = 0
-ST_CONNECTED = 1
+ST_AUTH_FAILED = 1
+ST_CONNECTED = 2
 
 # File which holds the client's session tickets.
 CLIENT_TICKET_FILE = "session_ticket.yaml"
